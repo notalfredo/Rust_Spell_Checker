@@ -323,6 +323,7 @@ pub fn spell_check( testname : &str  , dictname : &str , printOn : u32)
     vec.drain(0..1);
 
 
+    println!("FAFDF === |{}|" , testname);
 
     //let my_testname = save_first_line_into_string(testname);
     let my_testname = testname;
@@ -354,7 +355,7 @@ pub fn spell_check( testname : &str  , dictname : &str , printOn : u32)
             curr_char = c;
             edit_mode = 0 ;
         }
-        else if ((c == '.') || (c == ',') || (c == '?') || (c == ' ') ) && edit_mode == 0
+        else if ((c == '.') || (c == ',') || (c == '?') || (c == ' ') ) && (edit_mode == 0 || edit_mode ==1)
         {
             curr_char = c;
             edit_mode = 1 ;
