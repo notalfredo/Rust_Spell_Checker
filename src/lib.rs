@@ -8,42 +8,37 @@ use std::{
     path::Path,
 };
 
-fn all_possible(cmp_string : &str , our_vec : &Vec<String>  ) -> Vec<String>
+fn all_possible(cmp_string : &str , our_vec : &Vec<String>  ) -> (Vec<String> , usize)
 {
 
     let mut possible_fixs: Vec<String> = Vec::new();
 
-    let mut min_dist : usize = 0;
+    let mut min_dist : usize = 2000000;
     let mut cur_edit_dist : usize ;
 
-    let mut count = 0;
 
     for line in our_vec
     {   
         cur_edit_dist = edit_distance(&cmp_string , &line , 0);
 
 
-        if count == 0
+
+
+        if  min_dist == cur_edit_dist
         {
-            min_dist = cur_edit_dist;
             possible_fixs.push(line.to_string());
         }
-
-         else if  min_dist == cur_edit_dist
-         {
-            possible_fixs.push(line.to_string());
-         }
-         else if min_dist < cur_edit_dist
-         {
+        else if cur_edit_dist < min_dist
+        {
             min_dist = cur_edit_dist;
             possible_fixs.clear();
             possible_fixs.push(line.to_string());
-         }
+        }
 
-        count += 1;
+
     }
 
-    return possible_fixs;
+    return (possible_fixs , min_dist);
 }
 
 
@@ -333,16 +328,25 @@ pub fn spell_check( testname : &str  , dictname : &str , printOn : u32)
 
     let mut edit_mode : i32 = -1;
     
+    let mut final_string : String = String::new();
+
+    let mut curr_char : char;
+
+    let mut user_choice : String;
+
+
 
     for c in my_testname.chars() 
     { 
         
         if ((c == '.') || (c == ',') || (c == '?') || (c == ' ')) && edit_mode == -1
         {
+            curr_char = c;
             edit_mode = 0 ;
         }
         else if ((c == '.') || (c == ',') || (c == '?') || (c == ' ') ) && edit_mode == 0
         {
+            curr_char = c;
             edit_mode = 1 ;
         }
         else 
@@ -351,34 +355,58 @@ pub fn spell_check( testname : &str  , dictname : &str , printOn : u32)
             temp_store.push(c);
         }
 
+        if (edit_mode == 0) && (vec.contains(&temp_store.to_lowercase()))
+        {
+
+            final_string.push_str(&temp_store);
+
+            println!("---> |{}| Word spelled correctly! \n" , temp_store);
+        }
         
         if (edit_mode == 0) && (!vec.contains(&temp_store.to_lowercase()))
         {
-            let found = all_possible(&temp_store , &vec);
-            //println!("Found = {}" , temp_store)
-            for line in found{
-                println!("{}" , line);
+            let (found , min_dist) = all_possible(&temp_store.to_lowercase() , &vec);
+
+            println!("-Possible spelling mistake ->|{}| " , temp_store);
+            print!("Would you like to see all possible fixes y/n? : ");
+            io::stdout().flush().unwrap();
+
+            io::stdout().flush().unwrap();
+            user_choice = ask_user_string();
+
+            if user_choice.eq("y")
+            {
+                let mut my_counter = 1;
+                for line in found{
+                    println!("{} - {}" , my_counter , line);
+
+                    print!("Is this correct word y/n ? :");
+                    io::stdout().flush().unwrap();
+                    user_choice = ask_user_string();
+                    if user_choice.eq("y")
+                    {
+                        final_string.push_str(&line);
+                        break;
+                    }
+                    my_counter += 1;
+                }
             }
+            else
+            {
+                final_string.push_str(&temp_store);
+            }
+            
 
 
-            println!("\n\n");
+
+
+            println!("\n");
         }
-
-
-        //vec.contains(&temp_store);
-
-
-
-
-
-
-
-
-
 
 
         if edit_mode == 0
         {
+            final_string.push(c);
             //println!("edit mode = {}" , edit_mode);
             //println!("{}" , temp_store);
             //if vec.contains(&temp_store.to_lowercase())
@@ -387,9 +415,15 @@ pub fn spell_check( testname : &str  , dictname : &str , printOn : u32)
             //}
             temp_store.clear();
         }
+        if edit_mode == 1
+        {
+            final_string.push(c);
+        }
     }
     //temp_store.clear();
     //print!("{}" , temp_store);
     //io::stdout().flush().unwrap();
+
+    println!("FINAL STRING ==== |{}|" , final_string);
 
 }

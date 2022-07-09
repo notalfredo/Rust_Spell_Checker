@@ -46,10 +46,11 @@ fn main()
     print!("\nEnter print mode (0 - not verbose, 1 - verbose): ");
     io::stdout().flush().unwrap();
 
-    print_on = spell_checker::ask_user_number();
+    //print_on = spell_checker::ask_user_number();
 
-    
-    print!("Enter the dictionary file name: ");
+    //print!("Enter the dictionary file name: ");
+
+    print!("\nEnter the dictionary file name: ");
     io::stdout().flush().unwrap();
 
     dictname = ask_user_string();
