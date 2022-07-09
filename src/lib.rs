@@ -8,6 +8,16 @@ use std::{
     path::Path,
 };
 
+
+fn write_to_file(my_string : &str) 
+{
+    let path = "out_put.txt";
+    let mut output = File::create(path).expect("FAILED");
+    let line = my_string;
+    write!(output, "{}", line).expect("FAILED");
+} 
+
+
 fn all_possible(cmp_string : &str , our_vec : &Vec<String>  ) -> (Vec<String> , usize)
 {
 
@@ -314,8 +324,8 @@ pub fn spell_check( testname : &str  , dictname : &str , printOn : u32)
 
 
 
-    let my_testname = save_first_line_into_string(testname);
-
+    //let my_testname = save_first_line_into_string(testname);
+    let my_testname = testname;
 
     //println!("My first string is ==== |{}|" , my_testname);
 
@@ -390,6 +400,7 @@ pub fn spell_check( testname : &str  , dictname : &str , printOn : u32)
                     }
                     my_counter += 1;
                 }
+                final_string.push_str(&temp_store);
             }
             else
             {
@@ -424,6 +435,5 @@ pub fn spell_check( testname : &str  , dictname : &str , printOn : u32)
     //print!("{}" , temp_store);
     //io::stdout().flush().unwrap();
 
-    println!("FINAL STRING ==== |{}|" , final_string);
-
+    write_to_file(&final_string);
 }
