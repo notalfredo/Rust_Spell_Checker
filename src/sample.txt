@@ -9,7 +9,10 @@ int main()
 
   // Part1: Compute and show edit distance for pairs of words
   printf("Repeatedly enter two words separated by a space (e.g.: cat someone).\n Stop with: -1 -1\n");
-  while (1==1) {
+  while (1==1) 
+    
+  {
+
 	scanf("%s %s%c", first, second, &c);
 	printf("\n first: %s\n", first);
 	printf("second: %s\n", second);

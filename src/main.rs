@@ -1,9 +1,13 @@
 
 use spell_checker::*;
+use std::io::{self , Write};
 fn main() 
 {
     let mut first = String::new();
     let mut second = String::new();
+
+
+
     let mut dictname = String::new();
     let mut testname = String::new();
 
@@ -12,10 +16,16 @@ fn main()
 
     while 1 == 1 
     {
+        print!("Enter First String : ");
+        io::stdout().flush().unwrap();
         first = spell_checker::ask_user_string();
+
+
+        print!("Enter Second String : ");
+        io::stdout().flush().unwrap();
         second = spell_checker::ask_user_string();
         
-        println!("First string = {}  second String = {} " , first , second);
+        //println!("First string = {}  second String = {} " , first , second);
 
         if first.contains("-1") && second.contains("-1")
         {
@@ -24,17 +34,35 @@ fn main()
         else
         {
             let distance = edit_distance(&first, &second , 1);
-            println!("Edit Distance = {}" , distance)
+            println!("Edit Distance = {}" , distance);
 
+            println!("===================================================================");
 
         }
-        
 
-
-        break;
     }
 
+    println!("\nPart 2 - spell check a file.");
+    print!("\nEnter print mode (0 - not verbose, 1 - verbose): ");
+    io::stdout().flush().unwrap();
 
+    print_on = spell_checker::ask_user_number();
+
+    
+    print!("Enter the dictionary file name: ");
+    io::stdout().flush().unwrap();
+
+    dictname = ask_user_string();
+
+    
+
+    print!("Enter the text file name: ");
+    io::stdout().flush().unwrap();
+
+    testname = ask_user_string();
+
+
+    spell_checker::spell_check(&testname, &dictname, 0);
 
 
 

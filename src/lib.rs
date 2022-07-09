@@ -1,5 +1,90 @@
 use core::num;
+use std::fs;
 use std::io::{self, stdin, Write};
+
+use std::{
+    fs::File,
+    io::{prelude::*, BufReader},
+    path::Path,
+};
+
+fn all_possible(cmp_string : &str , our_vec : &Vec<String>  ) -> Vec<String>
+{
+
+    let mut possible_fixs: Vec<String> = Vec::new();
+
+    let mut min_dist : usize = 0;
+    let mut cur_edit_dist : usize ;
+
+    let mut count = 0;
+
+    for line in our_vec
+    {   
+        cur_edit_dist = edit_distance(&cmp_string , &line , 0);
+
+
+        if count == 0
+        {
+            min_dist = cur_edit_dist;
+            possible_fixs.push(line.to_string());
+        }
+
+         else if  min_dist == cur_edit_dist
+         {
+            possible_fixs.push(line.to_string());
+         }
+         else if min_dist < cur_edit_dist
+         {
+            min_dist = cur_edit_dist;
+            possible_fixs.clear();
+            possible_fixs.push(line.to_string());
+         }
+
+        count += 1;
+    }
+
+    return possible_fixs;
+}
+
+
+fn read_file_line_by_line(filename: impl AsRef<Path>) -> Vec<String> {
+    let file = File::open(filename).expect("no such file");
+    let buf = BufReader::new(file);
+    buf.lines()
+        .map(|l| l.expect("Could not parse line"))
+        .collect()
+
+    
+}
+
+fn print_vector(my_vector : &Vec<String>) 
+{
+    for i in my_vector {
+        println!("{}", i);
+    }
+}
+
+fn convert_string_to_integer(number : &str) -> i32
+{
+    let number: i32 = match number.trim().parse()
+    {
+        Ok(num) => num,
+        Err(_) => 
+        {
+            panic!("Could not read number");
+        }
+    };
+
+    return number;
+}
+
+fn save_first_line_into_string(file_name : &str) -> String
+{
+    let contents = fs::read_to_string(file_name)
+        .expect("could not read file");
+    
+    return contents;
+}
 
 
 
@@ -43,8 +128,7 @@ pub fn ask_user_number
 pub fn ask_user_string
 () -> String
 {
-    print!("Please enter String : ");
-    io::stdout().flush().unwrap();
+
 
     let mut input_string : String = String::new();
 
@@ -80,11 +164,17 @@ pub fn spacer(n : usize) -> &'static str
 
 fn print_dash(length : usize)
 {
+    /* 
     let number_of_dashes = ((length +2) * 3) + length+1;
     for i in 0..=number_of_dashes
     {
         print!("-"); io::stdout().flush().unwrap();
     }
+    */
+
+    let dashes = ((length + 2) * 3) + length + 2;
+    print!("{}", "-".repeat(dashes));
+    io::stdout().flush().unwrap();
 }
 
 
@@ -178,12 +268,8 @@ pub fn edit_distance
     let second_len : usize = second.len();
 
 
-    println!("first = {} second = {}" , first_len , second_len);
-
-
-    //let mut vec = vec![vec![0 ; first_len + 1]; second_len + 1];
+    //println!("first = {} second = {}" , first_len , second_len);
     let mut vec = vec![vec![0 ; second_len + 1]; first_len + 1];
-
 
     for i in 0..=first_len
     {
@@ -196,46 +282,114 @@ pub fn edit_distance
     }
 
 
-
-
-////////////////////////
-
-
     for i in 1..=first_len
     {
         for j in 1..=second_len
         {
-            //let not_equal : i32;
-            //let equal : i32;
-
             if first.chars().nth(i-1).unwrap() != second.chars().nth(j-1).unwrap()
             {
                 let not_equal = min_distance( vec[i-1][j] +1 , vec[i][j-1] +1  , vec[i-1][j-1]+1);
                 vec[i][j] = not_equal;
-        
-
             }
             else if first.chars().nth(i-1).unwrap() == second.chars().nth(j-1).unwrap()
             {
                 let equal = min_distance( vec[i-1][j] +1 , vec[i][j-1] +1  , vec[i-1][j-1]+0);
                 vec[i][j] = equal;
-
-
             }
-              
-
         }
     }
 
-    
-
-
-    print_vec(&vec, first_len , second_len  , first , second);
-
-
-    
+    if print_on == 1
+    {
+        print_vec(&vec, first_len , second_len  , first , second);
+    }
 
     return vec[first_len][second_len];
 }
 
 
+
+
+pub fn spell_check( testname : &str  , dictname : &str , printOn : u32)
+{
+
+    let mut vec = read_file_line_by_line(dictname);
+    vec.sort();
+    vec.drain(0..1);
+
+
+
+    let my_testname = save_first_line_into_string(testname);
+
+
+    //println!("My first string is ==== |{}|" , my_testname);
+
+    if printOn == 1
+    {
+        print_vector(&vec);
+    }
+
+    let mut temp_store : String = String::new();
+
+    let mut edit_mode : i32 = -1;
+    
+
+    for c in my_testname.chars() 
+    { 
+        
+        if ((c == '.') || (c == ',') || (c == '?') || (c == ' ')) && edit_mode == -1
+        {
+            edit_mode = 0 ;
+        }
+        else if ((c == '.') || (c == ',') || (c == '?') || (c == ' ') ) && edit_mode == 0
+        {
+            edit_mode = 1 ;
+        }
+        else 
+        {
+            edit_mode = -1 ;
+            temp_store.push(c);
+        }
+
+        
+        if (edit_mode == 0) && (!vec.contains(&temp_store.to_lowercase()))
+        {
+            let found = all_possible(&temp_store , &vec);
+            //println!("Found = {}" , temp_store)
+            for line in found{
+                println!("{}" , line);
+            }
+
+
+            println!("\n\n");
+        }
+
+
+        //vec.contains(&temp_store);
+
+
+
+
+
+
+
+
+
+
+
+        if edit_mode == 0
+        {
+            //println!("edit mode = {}" , edit_mode);
+            //println!("{}" , temp_store);
+            //if vec.contains(&temp_store.to_lowercase())
+            //{
+            //    println!("Found = {}" , temp_store);
+            //}
+            temp_store.clear();
+        }
+    }
+    //temp_store.clear();
+    //print!("{}" , temp_store);
+    //io::stdout().flush().unwrap();
+
+}
