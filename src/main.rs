@@ -4,7 +4,7 @@ use std::io::{self , Write};
 fn main() 
 {
  
-    let mut dictname = String::new();
+   
     let mut testname = String::new();
 
 
@@ -15,8 +15,9 @@ fn main()
     
     println!("FORMAT RULES : ");
     println!("  - Any letter from A-Z is allowed lowercase and uppercase");
-    println!("  - List of symbols to be recognized as separators: space (one white space), comma, dot, exclamation mark, question mark (, .!?).");
-    println!("                  ^^^ NO OTHER SEPARATOR CAN BE USED");
+    println!("  - List of symbols to be recognized as separators: space (one white space)");
+    println!("          comma, dot, exclamation mark, question mark (, .!?).");
+    println!("          NO OTHER SEPARATOR CAN BE USED");
     println!("  - ALL sentances must end with a recognized separator\n");
 
 
