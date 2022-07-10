@@ -323,12 +323,9 @@ pub fn spell_check( testname : &str  , dictname : &str , printOn : u32)
     vec.drain(0..1);
 
 
-    println!("FAFDF === |{}|" , testname);
 
-    //let my_testname = save_first_line_into_string(testname);
     let my_testname = testname;
 
-    //println!("My first string is ==== |{}|" , my_testname);
 
     if printOn == 1
     {
@@ -408,23 +405,13 @@ pub fn spell_check( testname : &str  , dictname : &str , printOn : u32)
                 final_string.push_str(&temp_store);
             }
             
-
-
-
-
             println!("\n");
         }
-
 
         if edit_mode == 0
         {
             final_string.push(c);
-            //println!("edit mode = {}" , edit_mode);
-            //println!("{}" , temp_store);
-            //if vec.contains(&temp_store.to_lowercase())
-            //{
-            //    println!("Found = {}" , temp_store);
-            //}
+
             temp_store.clear();
         }
         if edit_mode == 1
@@ -432,9 +419,8 @@ pub fn spell_check( testname : &str  , dictname : &str , printOn : u32)
             final_string.push(c);
         }
     }
-    //temp_store.clear();
-    //print!("{}" , temp_store);
-    //io::stdout().flush().unwrap();
+
+
 
     write_to_file(&final_string);
 }
